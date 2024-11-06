@@ -19,7 +19,7 @@ const AuthorTable = () => {
   }, []);
 
   return (
-    <div className="overflow-y-auto bg-light-blue rounded-md h-[400px] w-full font-semibold text-white">
+    <div className="overflow-y-auto bg-light-brown-color rounded-md h-[400px] w-full font-semibold text-white">
       <table className="table">
         <thead className="text-center">
           <tr className="border-none">
@@ -31,7 +31,7 @@ const AuthorTable = () => {
 
         <tbody className="text-center">
           {authors.map((author) => (
-            <tr className="border-none" key={author.id}>
+            <tr className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black" key={author.id}>
               <td>{author.firstName}</td>
               <td>{author.lastName}</td>
               <td>{author.dob}</td>

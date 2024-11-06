@@ -25,7 +25,7 @@ const BookTable = () => {
   };
 
   return (
-    <div className="overflow-y-auto bg-[#ffbf69] font-semibold text-white rounded-md h-[400px] w-full">
+    <div className="overflow-y-auto bg-light-brown-color font-semibold text-white rounded-md h-[400px] w-full">
       <table className="table">
         <thead className="text-center">
           <tr className="border-none ">
@@ -40,7 +40,7 @@ const BookTable = () => {
           {books.map((book) => (
             <tr
               onClick={() => handleRowClick(book.isbn)}
-              className="border-none cursor-pointer hover:bg-light-blue"
+              className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black"
               key={book.isbn}
             >
               <td className="border-none">{book.isbn}</td>

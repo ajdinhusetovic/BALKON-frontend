@@ -1,6 +1,6 @@
 const Navbar = () => {
   return (
-    <div className="navbar bg-light-blue text-white">
+    <div className="navbar bg-dark-brown-color text-white">
       <div className="flex-1">
         <a className="btn btn-ghost text-3xl">book&author</a>
       </div>

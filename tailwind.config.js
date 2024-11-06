@@ -12,8 +12,8 @@ export default {
       colors: {
         "white-color": "#fdfffc",
         "light-blue": "#2ec4b6",
-        "orange-color": "#ffbf69",
-        "dark-color": "#011627",
+        "light-brown-color": "#dda15e",
+        "dark-brown-color": "#bc6c25",
         "red-color": "#e71d36",
       },
     },
