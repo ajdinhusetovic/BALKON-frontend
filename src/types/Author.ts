@@ -1,7 +1,7 @@
 interface Author {
   id: string;
   firstName: string;
-  lastName: number;
+  lastName: string;
   dob: Date;
   books: string[];
 }

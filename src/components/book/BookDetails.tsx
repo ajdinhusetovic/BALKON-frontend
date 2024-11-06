@@ -30,7 +30,7 @@ const BookDetails = () => {
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">ISBN: {book.isbn}</p>
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">Pages: {book.pages}</p>
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">Published: {book.published}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit ">Authors: John Fitzgerald</p>
+      <p className="p-8 text-4xl bg-light-brown-color w-fit ">Authors: aa</p>
     </div>
   );
 };
