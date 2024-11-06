@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Book from "../../types/Book";
 
 const BookDetails = () => {
-  const { isbn } = useParams(); // Get ISBN from URL params
-  const [book, setBook] = useState(null);
+  const { isbn } = useParams();
+  const [book, setBook] = useState<Book | null>(null);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -19,7 +20,7 @@ const BookDetails = () => {
     if (isbn) {
       fetchBookDetails();
     }
-  }, [isbn]); // Dependency array ensures the effect runs when the ISBN changes
+  }, [isbn]);
 
   if (!book) return <div>Loading...</div>;
 

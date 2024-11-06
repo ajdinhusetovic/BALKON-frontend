@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Modal from "../Modal";
+import Author from "../../types/Author";
 
 const AuthorTable = () => {
   const [authors, setAuthors] = useState([]);
@@ -30,11 +30,11 @@ const AuthorTable = () => {
         </thead>
 
         <tbody className="text-center">
-          {authors.map((author) => (
+          {authors.map((author: Author) => (
             <tr className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black" key={author.id}>
               <td>{author.firstName}</td>
               <td>{author.lastName}</td>
-              <td>{author.dob}</td>
+              <td>{new Date(author.dob).toLocaleDateString()}</td>
             </tr>
           ))}
         </tbody>

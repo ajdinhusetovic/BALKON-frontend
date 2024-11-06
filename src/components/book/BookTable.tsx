@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Modal from "../Modal";
 import { useNavigate } from "react-router-dom";
+import Book from "../../types/Book";
 
 const BookTable = () => {
   const [books, setBooks] = useState([]);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   async function fetchBooks() {
     try {
@@ -20,8 +20,8 @@ const BookTable = () => {
     fetchBooks();
   }, []);
 
-  const handleRowClick = (bookId) => {
-    navigate(`/books/${bookId}`); // Navigate to the book details page
+  const handleRowClick = (bookId: string) => {
+    navigate(`/books/${bookId}`);
   };
 
   return (
@@ -37,7 +37,7 @@ const BookTable = () => {
         </thead>
 
         <tbody className="text-center">
-          {books.map((book) => (
+          {books.map((book: Book) => (
             <tr
               onClick={() => handleRowClick(book.isbn)}
               className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black"
