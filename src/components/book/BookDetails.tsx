@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Book from "../../types/Book";
@@ -6,6 +6,7 @@ import Book from "../../types/Book";
 const BookDetails = () => {
   const { isbn } = useParams();
   const [book, setBook] = useState<Book | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -21,16 +22,30 @@ const BookDetails = () => {
       fetchBookDetails();
     }
   }, [isbn]);
+  console.log(book);
 
   if (!book) return <div>Loading...</div>;
 
   return (
-    <div className="w-10/12 m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
+    <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
       <h2 className="p-8 text-4xl bg-light-brown-color w-fit ">{book.title}</h2>
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">ISBN: {book.isbn}</p>
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">Pages: {book.pages}</p>
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">Published: {book.published}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit ">Authors: aa</p>
+      <p className="p-8 text-4xl bg-light-brown-color w-fit ">
+        Authors:{" "}
+        {book.authors.map((author) => (
+          <Link key={author.id} className="block hover:text-dark-brown-color" to={`/authors/${author.id}`}>
+            {author.firstName} {author.lastName}
+          </Link>
+        ))}
+      </p>
+      <button
+        onClick={() => navigate(`/books/edit/${book.isbn}`)}
+        className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+      >
+        Edit
+      </button>
     </div>
   );
 };

@@ -1,9 +1,12 @@
+import Book from "./Book";
+
 interface Author {
-  id: string;
+  id?: string;
   firstName: string;
   lastName: string;
-  dob: Date;
-  books: string[];
+  dob: string;
+  image: string;
+  books: Book[];
 }
 
 export default Author;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import Author from "../../types/Author";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +13,8 @@ interface BookFormData {
   authors: string[];
 }
 
-const CreateBook = () => {
+const EditBook = () => {
+  const { isbn } = useParams<{ isbn: string }>();
   const [formData, setFormData] = useState<BookFormData>({
     isbn: "",
     title: "",
@@ -21,6 +23,7 @@ const CreateBook = () => {
     image: "",
     authors: [],
   });
+  const navigate = useNavigate();
 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,11 +31,13 @@ const CreateBook = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAuthors();
-  }, []);
+    if (isbn) {
+      fetchAuthors();
+      fetchBookDetails(isbn);
+    }
+  }, [isbn]);
 
   const fetchAuthors = async () => {
     try {
@@ -40,6 +45,23 @@ const CreateBook = () => {
       setAuthors(response.data);
     } catch (err) {
       console.error("Error fetching authors:", err);
+    }
+  };
+
+  const fetchBookDetails = async (isbn: string) => {
+    try {
+      const response = await axios.get(`https://balkon-backend.onrender.com/books/${isbn}`);
+      const book = response.data;
+      setFormData({
+        isbn: book.isbn,
+        title: book.title,
+        pages: book.pages.toString(),
+        published: book.published.toString(),
+        image: book.image || "",
+        authors: book.authors.map((author: Author) => `${author.firstName} ${author.lastName}`),
+      });
+    } catch (err) {
+      console.error("Error fetching book details:", err);
     }
   };
 
@@ -62,29 +84,35 @@ const CreateBook = () => {
         published: parseInt(formData.published),
       };
 
-      await axios.post("https://balkon-backend.onrender.com/books", bookData);
+      await axios.put(`https://balkon-backend.onrender.com/books/${formData.isbn}`, bookData);
+
+      const currentAuthorsResponse = await axios.get(
+        `https://balkon-backend.onrender.com/books/${formData.isbn}/authors`,
+      );
+      const currentAuthors = currentAuthorsResponse.data;
+
+      const authorsToRemove = currentAuthors.filter(
+        (currentAuthor: Author) => !formData.authors.includes(currentAuthor.firstName + " " + currentAuthor.lastName),
+      );
+
+      for (const author of authorsToRemove) {
+        await axios.delete(`https://balkon-backend.onrender.com/books/${formData.isbn}/authors/${author.id}`);
+      }
 
       for (const author of formData.authors) {
-        const authorId = authors.find((a) => `${a.firstName} ${a.lastName}` === author)?.id;
+        const authorFullName = author.split(" ");
+        const authorId = authors.find((a) => a.firstName === authorFullName[0] && a.lastName === authorFullName[1])?.id;
+
         if (authorId) {
-          await axios.post(`https://balkon-backend.onrender.com/books/${formData.isbn}/authors`, {
-            authorId,
-          });
+          await axios.post(`https://balkon-backend.onrender.com/books/${formData.isbn}/authors`, { authorId });
         }
       }
 
       setSuccess(true);
-      setFormData({
-        isbn: "",
-        title: "",
-        pages: "",
-        published: "",
-        image: "",
-        authors: [],
-      });
-      navigate("/");
+      navigate(`/books/${isbn}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while creating the book");
+      setError(err instanceof Error ? err.message : "An error occurred while editing the book");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -124,11 +152,11 @@ const CreateBook = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-16 p-8 rounded-2xl">
+    <div className="max-w-2xl mx-auto mt-16 mb-16 p-8 rounded-2xl bg-dark-brown-color">
       {error && <p className="text-red-500 mb-4 font-semibold">{error}</p>}
-      {success && <p className="text-green-500 mb-4 font-semibold">Book created successfully!</p>}
+      {success && <p className="text-green-500 mb-4 font-semibold">Book updated successfully!</p>}
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-dark-brown-color p-8 rounded-2xl">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1 text-light-brown-color font-bold text-lg">ISBN *</label>
           <input
@@ -209,16 +237,16 @@ const CreateBook = () => {
                 filteredAuthors.map((author) => (
                   <div
                     key={author.id}
-                    className=" hover:bg-white-color cursor-pointer"
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => addAuthor(author.firstName, author.lastName)}
                   >
-                    <p className="font-semibold p-2 text-white-color hover:text-black">
+                    <p className="text-white font-semibold hover:text-black">
                       {author.firstName + " " + author.lastName}
                     </p>
                   </div>
                 ))
               ) : (
-                <div className="text-white font-bold text-lg">No authors found</div>
+                <div className="p-2 text-white-color">No authors found</div>
               )}
             </div>
           )}
@@ -228,7 +256,7 @@ const CreateBook = () => {
               {formData.authors.map((author) => (
                 <div
                   key={author}
-                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color font-semibold"
+                  className="flex justify-between items-center text-white-color font-semibold bg-light-brown-color p-4 rounded-2xl text-lg"
                 >
                   {author}
                   <button
@@ -251,7 +279,7 @@ const CreateBook = () => {
             className="w-full p-2 bg-light-brown-color text-white-color font-semibold rounded-2xl hover:bg-white-color hover:text-black disabled:bg-slate-500"
             disabled={loading}
           >
-            {loading ? "Creating..." : "Create Book"}
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </form>
@@ -259,4 +287,4 @@ const CreateBook = () => {
   );
 };
 
-export default CreateBook;
+export default EditBook;
