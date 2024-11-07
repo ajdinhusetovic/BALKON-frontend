@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Author from "../../types/Author";
 import { useNavigate } from "react-router-dom";
-
-interface Book {
-  isbn: string;
-  title: string;
-}
+import Book from "../../types/Book";
 
 const CreateAuthor = () => {
   const [formData, setFormData] = useState<Author>({
@@ -95,7 +91,7 @@ const CreateAuthor = () => {
 
   const addBook = (book: Book) => {
     if (!formData.books.some((b) => b.isbn === book.isbn)) {
-      setFormData((prev) => ({
+      setFormData((prev: Author) => ({
         ...prev,
         books: [...prev.books, book],
       }));
