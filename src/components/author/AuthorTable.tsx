@@ -25,7 +25,7 @@ const AuthorTable = () => {
   };
 
   return (
-    <div className="overflow-y-auto bg-light-brown-color rounded-md h-[400px] w-full font-semibold text-white">
+    <div className="overflow-y-auto bg-light-brown-color rounded-md h-[400px] w-full font-semibold text-white-color">
       <table className="table">
         <thead className="text-center">
           <tr className="border-none">
@@ -39,7 +39,7 @@ const AuthorTable = () => {
           {authors.map((author: Author) => (
             <tr
               onClick={() => handleRowClick(author.id || "")}
-              className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black"
+              className="border-none cursor-pointer hover:bg-dark-brown-color"
               key={author.id}
             >
               <td>{author.firstName}</td>

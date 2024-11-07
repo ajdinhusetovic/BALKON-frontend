@@ -172,7 +172,7 @@ const CreateAuthor = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-white font-bold text-lg">No books found</div>
+                <div className="p-2 text-white font-bold text-lg">No books found</div>
               )}
             </div>
           )}

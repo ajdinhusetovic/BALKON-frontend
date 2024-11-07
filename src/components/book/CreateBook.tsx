@@ -218,7 +218,7 @@ const CreateBook = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-white font-bold text-lg">No authors found</div>
+                <div className="text-white font-bold text-lg p-2">No authors found</div>
               )}
             </div>
           )}

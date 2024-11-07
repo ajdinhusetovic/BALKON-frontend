@@ -40,7 +40,7 @@ const BookTable = () => {
           {books.map((book: Book) => (
             <tr
               onClick={() => handleRowClick(book.isbn)}
-              className="border-none cursor-pointer hover:bg-[#fefae0] hover:text-black"
+              className="border-none cursor-pointer hover:bg-dark-brown-color hover:text-white-color font-semibold"
               key={book.isbn}
             >
               <td className="border-none">{book.isbn}</td>

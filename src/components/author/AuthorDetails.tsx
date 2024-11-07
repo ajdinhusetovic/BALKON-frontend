@@ -7,7 +7,6 @@ const AuthorDetails = () => {
   const { id } = useParams();
   const [author, setAuthor] = useState<Author | null>(null);
   const navigate = useNavigate();
-  console.log(id);
 
   useEffect(() => {
     const fetchAuthorDetails = async () => {
@@ -24,6 +23,15 @@ const AuthorDetails = () => {
     }
   }, [id]);
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`https://balkon-backend.onrender.com/authors/${id}`);
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting the author:", error);
+    }
+  };
+
   if (!author) return <div>Loading...</div>;
 
   return (
@@ -36,17 +44,22 @@ const AuthorDetails = () => {
       <p className="p-8 text-4xl bg-light-brown-color w-fit ">
         Books:{" "}
         {author.books.map((book) => (
-          <Link className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
+          <Link key={book.isbn} className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
             {book.title}
           </Link>
         ))}
       </p>
-      <button
-        onClick={() => navigate(`/authors/edit/${author.id}`)}
-        className="p-8 text-4xl bg-light-brown-color w-fit text-white rounded hover:bg-dark-brown-color"
-      >
-        Edit
-      </button>
+      <div className="flex gap-4">
+        <button
+          onClick={() => navigate(`/authors/edit/${author.id}`)}
+          className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+        >
+          Edit
+        </button>
+        <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
+          Delete
+        </button>
+      </div>
     </div>
   );
 };

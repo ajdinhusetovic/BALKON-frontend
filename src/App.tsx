@@ -10,18 +10,20 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/books/:isbn" element={<BookDetails />} />
-        <Route path="/books/create" element={<CreateBook />} />
-        <Route path="/books/edit/:isbn" element={<EditBook />} />
-        <Route path="/authors/:id" element={<AuthorDetails />} />
-        <Route path="/authors/create" element={<CreateAuthor />} />
-        <Route path="/authors/edit/:id" element={<EditAuthor />} />
-      </Routes>
-    </Router>
+    <div className="bg-white-color h-screen">
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/books/:isbn" element={<BookDetails />} />
+          <Route path="/books/create" element={<CreateBook />} />
+          <Route path="/books/edit/:isbn" element={<EditBook />} />
+          <Route path="/authors/:id" element={<AuthorDetails />} />
+          <Route path="/authors/create" element={<CreateAuthor />} />
+          <Route path="/authors/edit/:id" element={<EditAuthor />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 
