@@ -14,10 +14,11 @@ const EditAuthor = () => {
     firstName: "",
     lastName: "",
     dob: "",
-    image: "",
+    image: null as File | null,
+    imagePreview: "",
     books: [] as Book[],
   });
-  const [books, setBooks] = useState<Book[]>([]);
+  const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [error, setError] = useState("");
@@ -35,7 +36,7 @@ const EditAuthor = () => {
   const fetchBooks = async () => {
     try {
       const response = await axios.get("https://balkon-backend.onrender.com/books");
-      setBooks(response.data);
+      setAllBooks(response.data);
     } catch (err) {
       console.error("Error fetching books:", err);
     }
@@ -44,7 +45,14 @@ const EditAuthor = () => {
   const fetchAuthorData = async () => {
     try {
       const response = await axios.get(`https://balkon-backend.onrender.com/authors/${id}`);
-      setFormData(response.data);
+      setFormData((prev) => ({
+        ...prev,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName,
+        dob: response.data.dob,
+        imagePreview: response.data.image || "",
+        books: response.data.books,
+      }));
     } catch (err) {
       console.error("Error fetching author data:", err);
     }
@@ -64,18 +72,42 @@ const EditAuthor = () => {
       setSuccess(false);
 
       const formattedData = {
-        ...formData,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         dob: new Date(formData.dob).toISOString().split("T")[0],
       };
 
-      await axios.put(`https://balkon-backend.onrender.com/authors/${id}`, formattedData);
+      // Create a new FormData object to include the image file
+      const form = new FormData();
+      Object.entries(formattedData).forEach(([key, value]) => {
+        form.append(key, value);
+      });
+      if (formData.image) {
+        form.append("image", formData.image);
+      }
+
+      // Update the author
+      await axios.put(`https://balkon-backend.onrender.com/authors/${id}`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Associate books with the author
+      await Promise.all(
+        formData.books.map(async (book) => {
+          await axios.post(`https://balkon-backend.onrender.com/books/${book.isbn}/authors`, {
+            authorId: id,
+          });
+        }),
+      );
 
       setSuccess(true);
-      navigate(`/authors/${id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred while editing the author");
     } finally {
       setLoading(false);
+      navigate(`/authors/${id}`);
     }
   };
 
@@ -87,27 +119,43 @@ const EditAuthor = () => {
     }));
   };
 
-  const filteredBooks = books.filter(
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+        imagePreview: URL.createObjectURL(file),
+      }));
+    }
+  };
+
+  const filteredBooks = allBooks.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) && !formData.books.some((b) => b.isbn === book.isbn),
   );
 
   const addBook = (book: Book) => {
-    if (!formData.books.some((b) => b.isbn === book.isbn)) {
-      setFormData((prev) => ({
-        ...prev,
-        books: [...prev.books, book],
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      books: [...prev.books, book],
+    }));
     setSearchTerm("");
     setShowDropdown(false);
   };
 
-  const removeBook = (bookToRemove: Book) => {
-    setFormData((prev) => ({
-      ...prev,
-      books: prev.books.filter((b) => b.isbn !== bookToRemove.isbn),
-    }));
+  const removeBook = async (bookToRemove: Book) => {
+    try {
+      setFormData((prev) => ({
+        ...prev,
+        books: prev.books.filter((b) => b.isbn !== bookToRemove.isbn),
+      }));
+
+      // Remove the association between the book and the author
+      await axios.delete(`https://balkon-backend.onrender.com/books/${bookToRemove.isbn}/authors/${id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove book");
+    }
   };
 
   return (
@@ -153,15 +201,19 @@ const EditAuthor = () => {
         </div>
 
         <div>
-          <label className="block mb-1 text-light-brown-color font-bold text-lg">Image URL</label>
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
-            disabled={loading}
-          />
+          <label className="block mb-1 text-light-brown-color font-bold text-lg">Image</label>
+          <div className="flex items-center">
+            {formData.imagePreview && (
+              <img src={formData.imagePreview} alt="Author" className="w-32 h-32 object-cover rounded-2xl mr-4" />
+            )}
+            <input
+              type="file"
+              name="image"
+              onChange={handleFileChange}
+              className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color file:bg-light-brown-color file:border-none file:text-dark-brown-color file:font-semibold file:cursor-pointer"
+              disabled={loading}
+            />
+          </div>
         </div>
 
         <div className="relative">
@@ -182,12 +234,12 @@ const EditAuthor = () => {
             <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-light-brown-color rounded-2xl shadow-lg">
               {filteredBooks.length > 0 ? (
                 filteredBooks.map((book) => (
-                  <div key={book.isbn} className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => addBook(book)}>
-                    <p className="text-white font-semibold hover:text-black">{book.title}</p>
+                  <div key={book.isbn} className=" hover:bg-white-color cursor-pointer" onClick={() => addBook(book)}>
+                    <p className="font-semibold p-2 text-white-color hover:text-black">{book.title}</p>
                   </div>
                 ))
               ) : (
-                <div className="p-2 text-white-color">No books found</div>
+                <div className="p-2 text-white-color font-bold text-lg">No books found</div>
               )}
             </div>
           )}
@@ -197,7 +249,7 @@ const EditAuthor = () => {
               {formData.books.map((book) => (
                 <div
                   key={book.isbn}
-                  className="flex justify-between items-center text-white-color font-semibold bg-light-brown-color p-4 rounded-2xl text-lg"
+                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color font-semibold"
                 >
                   {book.title}
                   <button

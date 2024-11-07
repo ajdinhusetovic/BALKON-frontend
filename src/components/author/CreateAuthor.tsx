@@ -47,16 +47,24 @@ const CreateAuthor = () => {
       setError("");
       setSuccess(false);
 
-      const formattedData = {
-        ...formData,
-        dob: new Date(formData.dob).toISOString().split("T")[0],
-      };
+      // Prepare the data to be submitted as FormData
+      const form = new FormData();
+      form.append("firstName", formData.firstName);
+      form.append("lastName", formData.lastName);
+      form.append("dob", new Date(formData.dob).toISOString().split("T")[0]);
+      if (formData.image) form.append("image", formData.image);
 
-      await axios.post("https://balkon-backend.onrender.com/authors", formattedData);
+      // Submit the author data
+      const response = await axios.post("https://balkon-backend.onrender.com/authors", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
+      // After creating the author, associate books with the author
       for (const book of formData.books) {
         await axios.post(`https://balkon-backend.onrender.com/books/${book.isbn}/authors`, {
-          authorId: formData.id,
+          authorId: response.data.id,
         });
       }
 
@@ -82,6 +90,20 @@ const CreateAuthor = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      const imageUrl = URL.createObjectURL(file);
+
+      setFormData((prev) => ({
+        ...prev,
+        image: imageUrl,
+      }));
+    }
   };
 
   const filteredBooks = books.filter(
@@ -120,7 +142,7 @@ const CreateAuthor = () => {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
@@ -132,7 +154,7 @@ const CreateAuthor = () => {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
@@ -144,7 +166,18 @@ const CreateAuthor = () => {
             name="dob"
             value={formData.dob}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            disabled={loading}
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-light-brown-color font-bold text-lg">Image</label>
+          <input
+            type="file"
+            name="image"
+            onChange={handleFileChange}
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color file:bg-light-brown-color file:border-none file:text-dark-brown-color file:font-semibold file:cursor-pointer"
             disabled={loading}
           />
         </div>
@@ -159,7 +192,7 @@ const CreateAuthor = () => {
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
 
@@ -172,7 +205,7 @@ const CreateAuthor = () => {
                   </div>
                 ))
               ) : (
-                <div className="p-2 text-white font-bold text-lg">No books found</div>
+                <div className="p-2 text-white-color font-bold text-lg">No books found</div>
               )}
             </div>
           )}
@@ -182,7 +215,7 @@ const CreateAuthor = () => {
               {formData.books.map((book) => (
                 <div
                   key={book.isbn}
-                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color font-semibold"
+                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color-color font-semibold"
                 >
                   {book.title}
                   <button

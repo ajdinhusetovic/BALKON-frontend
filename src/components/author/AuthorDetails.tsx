@@ -35,30 +35,34 @@ const AuthorDetails = () => {
   if (!author) return <div>Loading...</div>;
 
   return (
-    <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
-      <h2 className="p-8 text-4xl bg-light-brown-color w-fit ">
-        {author.firstName} {author.lastName}
-      </h2>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit ">Date of Birth: {author.dob}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit ">Image URL: {author.image}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit ">
-        Books:{" "}
-        {author.books.map((book) => (
-          <Link key={book.isbn} className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
-            {book.title}
-          </Link>
-        ))}
-      </p>
-      <div className="flex gap-4">
-        <button
-          onClick={() => navigate(`/authors/edit/${author.id}`)}
-          className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
-        >
-          Edit
-        </button>
-        <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
-          Delete
-        </button>
+    <div className="flex w-11/12 m-auto">
+      <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
+        <h2 className="p-8 text-4xl bg-light-brown-color w-fit ">
+          {author.firstName} {author.lastName}
+        </h2>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit ">Date of Birth: {author.dob}</p>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit ">
+          Books:{" "}
+          {author.books.map((book) => (
+            <Link key={book.isbn} className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
+              {book.title}
+            </Link>
+          ))}
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate(`/authors/edit/${author.id}`)}
+            className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+          >
+            Edit
+          </button>
+          <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
+            Delete
+          </button>
+        </div>
+      </div>
+      <div className="w-[50%] m-auto mt-16">
+        <img src={author.image} alt="" width={500} className="rounded" />
       </div>
     </div>
   );

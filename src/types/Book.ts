@@ -6,6 +6,7 @@ interface Book {
   pages: number;
   published: string;
   authors: Author[];
+  image: "";
 }
 
 export default Book;

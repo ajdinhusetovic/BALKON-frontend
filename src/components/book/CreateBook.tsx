@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Author from "../../types/Author";
 import { useNavigate } from "react-router-dom";
+
+interface Author {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
 
 interface BookFormData {
   isbn: string;
   title: string;
   pages: string;
   published: string;
-  image: string;
+  image: File | null;
   authors: string[];
 }
 
@@ -18,7 +23,7 @@ const CreateBook = () => {
     title: "",
     pages: "",
     published: "",
-    image: "",
+    image: null,
     authors: [],
   });
 
@@ -56,13 +61,21 @@ const CreateBook = () => {
       setError("");
       setSuccess(false);
 
-      const bookData = {
-        ...formData,
-        pages: parseInt(formData.pages),
-        published: parseInt(formData.published),
-      };
+      const bookData = new FormData();
+      bookData.append("isbn", formData.isbn);
+      bookData.append("title", formData.title);
+      bookData.append("pages", formData.pages);
+      bookData.append("published", formData.published);
 
-      await axios.post("https://balkon-backend.onrender.com/books", bookData);
+      if (formData.image) {
+        bookData.append("image", formData.image);
+      }
+
+      const response = await axios.post("https://balkon-backend.onrender.com/books", bookData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       for (const author of formData.authors) {
         const authorId = authors.find((a) => `${a.firstName} ${a.lastName}` === author)?.id;
@@ -73,17 +86,21 @@ const CreateBook = () => {
         }
       }
 
-      setSuccess(true);
-      setFormData({
-        isbn: "",
-        title: "",
-        pages: "",
-        published: "",
-        image: "",
-        authors: [],
-      });
-      navigate("/");
+      if (response.status === 201) {
+        setSuccess(true);
+        setFormData({
+          isbn: "",
+          title: "",
+          pages: "",
+          published: "",
+          image: null,
+          authors: [],
+        });
+      } else {
+        setError("Failed to create book");
+      }
     } catch (err) {
+      console.error("Error creating book:", err);
       setError(err instanceof Error ? err.message : "An error occurred while creating the book");
     } finally {
       setLoading(false);
@@ -91,29 +108,38 @@ const CreateBook = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+
+    if (name === "image" && files) {
+      setFormData((prev) => ({
+        ...prev,
+        image: files[0],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const filteredAuthors = authors.filter(
     (author) =>
-      author.firstName.toLowerCase().includes(searchTerm.toLowerCase()) && !formData.authors.includes(author.firstName),
+      author.firstName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !formData.authors.includes(`${author.firstName} ${author.lastName}`),
   );
 
-  const addAuthor = (authorName: string, authorLastName: string) => {
-    if (!formData.authors.includes(authorName)) {
-      const authorFullName = authorName + " " + authorLastName;
+  const addAuthor = (author: Author) => {
+    const authorFullName = `${author.firstName} ${author.lastName}`;
+    if (!formData.authors.includes(authorFullName)) {
       setFormData((prev) => ({
         ...prev,
         authors: [...prev.authors, authorFullName],
       }));
     }
 
-    setSearchTerm("");
-    setShowDropdown(false);
+    setSearchTerm(""); // Clear search term after adding
+    setShowDropdown(false); // Hide dropdown after selection
   };
 
   const removeAuthor = (authorToRemove: string) => {
@@ -136,7 +162,7 @@ const CreateBook = () => {
             name="isbn"
             value={formData.isbn}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
@@ -148,7 +174,7 @@ const CreateBook = () => {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
@@ -156,35 +182,34 @@ const CreateBook = () => {
         <div>
           <label className="block mb-1 text-light-brown-color font-bold text-lg">Pages *</label>
           <input
-            type="number"
+            type="text"
             name="pages"
             value={formData.pages}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
 
         <div>
-          <label className="block mb-1 text-light-brown-color font-bold text-lg">Publication Year *</label>
+          <label className="block mb-1 text-light-brown-color font-bold text-lg">Published Year *</label>
           <input
-            type="number"
+            type="text"
             name="published"
             value={formData.published}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
         </div>
 
         <div>
-          <label className="block mb-1 text-light-brown-color font-bold text-lg">Image URL</label>
+          <label className="block mb-1 text-light-brown-color font-bold text-lg">Image</label>
           <input
-            type="text"
+            type="file"
             name="image"
-            value={formData.image}
             onChange={handleChange}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color file:bg-light-brown-color file:border-none file:text-dark-brown-color file:font-semibold file:cursor-pointer"
             disabled={loading}
           />
         </div>
@@ -199,7 +224,7 @@ const CreateBook = () => {
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            className="w-full text-lg text-white font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
+            className="w-full text-lg text-white-color font-semibold p-4 rounded-2xl outline-none bg-light-brown-color"
             disabled={loading}
           />
 
@@ -209,32 +234,32 @@ const CreateBook = () => {
                 filteredAuthors.map((author) => (
                   <div
                     key={author.id}
-                    className=" hover:bg-white-color cursor-pointer"
-                    onClick={() => addAuthor(author.firstName, author.lastName)}
+                    className="hover:bg-white-color cursor-pointer"
+                    onClick={() => addAuthor(author)} // Passing the full author object
                   >
                     <p className="font-semibold p-2 text-white-color hover:text-black">
-                      {author.firstName + " " + author.lastName}
+                      {author.firstName} {author.lastName}
                     </p>
                   </div>
                 ))
               ) : (
-                <div className="text-white font-bold text-lg p-2">No authors found</div>
+                <div className="p-2 text-white-color font-bold text-lg">No authors found</div>
               )}
             </div>
           )}
 
           {formData.authors.length > 0 && (
             <div className="mt-2 space-y-2">
-              {formData.authors.map((author) => (
+              {formData.authors.map((author, index) => (
                 <div
-                  key={author}
+                  key={index}
                   className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color font-semibold"
                 >
                   {author}
                   <button
                     type="button"
                     onClick={() => removeAuthor(author)}
-                    className="text-red-500 hover:text-red-700 disabled:text-red-300"
+                    className="text-red-500 hover:text-red-700"
                     disabled={loading}
                   >
                     Remove

@@ -35,29 +35,34 @@ const BookDetails = () => {
   if (!book) return <div>Loading...</div>;
 
   return (
-    <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
-      <h2 className="p-8 text-4xl bg-light-brown-color w-fit">{book.title}</h2>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit">ISBN: {book.isbn}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit">Pages: {book.pages}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit">Published: {book.published}</p>
-      <p className="p-8 text-4xl bg-light-brown-color w-fit">
-        Authors:{" "}
-        {book.authors.map((author) => (
-          <Link key={author.id} className="block hover:text-dark-brown-color" to={`/authors/${author.id}`}>
-            {author.firstName} {author.lastName}
-          </Link>
-        ))}
-      </p>
-      <div className="flex gap-4">
-        <button
-          onClick={() => navigate(`/books/edit/${book.isbn}`)}
-          className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
-        >
-          Edit
-        </button>
-        <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
-          Delete
-        </button>
+    <div className="flex w-11/12 m-auto mb-16">
+      <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
+        <h2 className="p-8 text-4xl bg-light-brown-color w-fit">{book.title}</h2>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">ISBN: {book.isbn}</p>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">Pages: {book.pages}</p>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">Published: {book.published}</p>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">
+          Authors:{" "}
+          {book.authors.map((author) => (
+            <Link key={author.id} className="block hover:text-dark-brown-color" to={`/authors/${author.id}`}>
+              {author.firstName} {author.lastName}
+            </Link>
+          ))}
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate(`/books/edit/${book.isbn}`)}
+            className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+          >
+            Edit
+          </button>
+          <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
+            Delete
+          </button>
+        </div>
+      </div>
+      <div className="w-[50%] m-auto mt-16">
+        <img src={book.image} alt="" width={500} className="rounded" />
       </div>
     </div>
   );
