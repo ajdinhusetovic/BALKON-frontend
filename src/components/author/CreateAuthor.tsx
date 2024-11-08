@@ -215,7 +215,7 @@ const CreateAuthor = () => {
               {formData.books.map((book) => (
                 <div
                   key={book.isbn}
-                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color-color font-semibold"
+                  className="flex justify-between items-center bg-light-brown-color p-4 rounded-2xl text-white-color font-semibold"
                 >
                   {book.title}
                   <button

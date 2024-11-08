@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 interface Author {
   id: string;
@@ -33,7 +32,6 @@ const CreateBook = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAuthors();
@@ -138,8 +136,8 @@ const CreateBook = () => {
       }));
     }
 
-    setSearchTerm(""); // Clear search term after adding
-    setShowDropdown(false); // Hide dropdown after selection
+    setSearchTerm("");
+    setShowDropdown(false);
   };
 
   const removeAuthor = (authorToRemove: string) => {
@@ -235,7 +233,7 @@ const CreateBook = () => {
                   <div
                     key={author.id}
                     className="hover:bg-white-color cursor-pointer"
-                    onClick={() => addAuthor(author)} // Passing the full author object
+                    onClick={() => addAuthor(author)}
                   >
                     <p className="font-semibold p-2 text-white-color hover:text-black">
                       {author.firstName} {author.lastName}

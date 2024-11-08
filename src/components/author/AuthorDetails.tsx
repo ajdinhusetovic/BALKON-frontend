@@ -35,17 +35,17 @@ const AuthorDetails = () => {
   if (!author) return <div>Loading...</div>;
 
   return (
-    <div className="flex w-11/12 m-auto">
+    <div className="flex w-11/12 m-auto gap-20">
       <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
         <h2 className="p-8 text-4xl bg-light-brown-color w-fit ">
           {author.firstName} {author.lastName}
         </h2>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit ">Date of Birth: {author.dob}</p>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit ">
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">Date of Birth: {author.dob}</p>
+        <p className="p-8 text-4xl bg-light-brown-color w-fit">
           Books:{" "}
           {author.books.map((book) => (
             <Link key={book.isbn} className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
-              {book.title}
+              <p className="w-fit truncate">{book.title}</p>
             </Link>
           ))}
         </p>
@@ -62,7 +62,7 @@ const AuthorDetails = () => {
         </div>
       </div>
       <div className="w-[50%] m-auto mt-16">
-        <img src={author.image} alt="" width={500} className="rounded" />
+        <img src={author.image || ""} alt="" width={500} className="rounded" />
       </div>
     </div>
   );

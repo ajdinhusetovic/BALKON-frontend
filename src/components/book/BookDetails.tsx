@@ -37,7 +37,7 @@ const BookDetails = () => {
   return (
     <div className="flex w-11/12 m-auto mb-16">
       <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
-        <h2 className="p-8 text-4xl bg-light-brown-color w-fit">{book.title}</h2>
+        <h2 className="p-8 text-4xl bg-light-brown-color w-fit truncate">{book.title}</h2>
         <p className="p-8 text-4xl bg-light-brown-color w-fit">ISBN: {book.isbn}</p>
         <p className="p-8 text-4xl bg-light-brown-color w-fit">Pages: {book.pages}</p>
         <p className="p-8 text-4xl bg-light-brown-color w-fit">Published: {book.published}</p>

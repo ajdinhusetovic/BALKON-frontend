@@ -15,7 +15,6 @@ const EditAuthor = () => {
     lastName: "",
     dob: "",
     image: null as File | null,
-    imagePreview: "",
     books: [] as Book[],
   });
   const [allBooks, setAllBooks] = useState<Book[]>([]);
@@ -50,7 +49,6 @@ const EditAuthor = () => {
         firstName: response.data.firstName,
         lastName: response.data.lastName,
         dob: response.data.dob,
-        imagePreview: response.data.image || "",
         books: response.data.books,
       }));
     } catch (err) {
@@ -125,7 +123,6 @@ const EditAuthor = () => {
       setFormData((prev) => ({
         ...prev,
         image: file,
-        imagePreview: URL.createObjectURL(file),
       }));
     }
   };
@@ -151,7 +148,6 @@ const EditAuthor = () => {
         books: prev.books.filter((b) => b.isbn !== bookToRemove.isbn),
       }));
 
-      // Remove the association between the book and the author
       await axios.delete(`https://balkon-backend.onrender.com/books/${bookToRemove.isbn}/authors/${id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to remove book");
@@ -203,9 +199,6 @@ const EditAuthor = () => {
         <div>
           <label className="block mb-1 text-light-brown-color font-bold text-lg">Image</label>
           <div className="flex items-center">
-            {formData.imagePreview && (
-              <img src={formData.imagePreview} alt="Author" className="w-32 h-32 object-cover rounded-2xl mr-4" />
-            )}
             <input
               type="file"
               name="image"

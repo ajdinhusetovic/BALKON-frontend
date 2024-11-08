@@ -5,7 +5,7 @@ interface Author {
   firstName: string;
   lastName: string;
   dob: string;
-  image: File | string;
+  image?: string;
   books: Book[];
 }
 
