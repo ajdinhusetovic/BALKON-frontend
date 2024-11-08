@@ -148,7 +148,7 @@ const CreateBook = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-16 p-8 rounded-2xl">
+    <div className="max-w-2xl mx-auto mt-16 p-4 lg:p-8 rounded-2xl">
       {error && <p className="text-red-500 mb-4 font-semibold">{error}</p>}
       {success && <p className="text-green-500 mb-4 font-semibold">Book created successfully!</p>}
 

@@ -170,7 +170,7 @@ const EditBook = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-16 mb-16 p-8 rounded-2xl bg-dark-brown-color">
+    <div className="max-w-2xl mx-auto mt-16 p-4 lg:p-8 rounded-2xl bg-dark-brown-color">
       {error && <p className="text-red-500 mb-4 font-semibold">{error}</p>}
       {success && <p className="text-green-500 mb-4 font-semibold">Book updated successfully!</p>}
 

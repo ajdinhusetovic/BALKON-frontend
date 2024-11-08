@@ -35,13 +35,13 @@ const BookDetails = () => {
   if (!book) return <div>Loading...</div>;
 
   return (
-    <div className="flex w-11/12 m-auto mb-16">
-      <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
-        <h2 className="p-8 text-4xl bg-light-brown-color w-fit truncate">{book.title}</h2>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">ISBN: {book.isbn}</p>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">Pages: {book.pages}</p>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">Published: {book.published}</p>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">
+    <div className="flex flex-col lg:flex-row w-11/12 m-auto mb-16">
+      <div className="lg:w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
+        <h2 className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit truncate">{book.title}</h2>
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">ISBN: {book.isbn}</p>
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">Pages: {book.pages}</p>
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">Published: {book.published}</p>
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">
           Authors:{" "}
           {book.authors.map((author) => (
             <Link key={author.id} className="block hover:text-dark-brown-color" to={`/authors/${author.id}`}>
@@ -52,11 +52,14 @@ const BookDetails = () => {
         <div className="flex gap-4">
           <button
             onClick={() => navigate(`/books/edit/${book.isbn}`)}
-            className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+            className="p-4 w-[50%] lg:w-fit lg:text-4xl lg:p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
           >
             Edit
           </button>
-          <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
+          <button
+            onClick={handleDelete}
+            className="p-4 w-[50%] lg:w-fit lg:text-4xl lg:p-8 bg-red-600 text-white rounded hover:bg-red-700"
+          >
             Delete
           </button>
         </div>

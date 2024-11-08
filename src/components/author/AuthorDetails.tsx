@@ -35,13 +35,13 @@ const AuthorDetails = () => {
   if (!author) return <div>Loading...</div>;
 
   return (
-    <div className="flex w-11/12 m-auto gap-20">
-      <div className="w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
-        <h2 className="p-8 text-4xl bg-light-brown-color w-fit ">
+    <div className="flex flex-col lg:flex-row w-11/12 m-auto mb-16 lg:mb-0 lg:gap-20">
+      <div className="lg:w-[50%] m-auto mt-16 flex flex-col gap-4 text-white font-semibold">
+        <h2 className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit ">
           {author.firstName} {author.lastName}
         </h2>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">Date of Birth: {author.dob}</p>
-        <p className="p-8 text-4xl bg-light-brown-color w-fit">
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">Date of Birth: {author.dob}</p>
+        <p className="p-4 lg:p-8 lg:text-4xl bg-light-brown-color w-fit">
           Books:{" "}
           {author.books.map((book) => (
             <Link key={book.isbn} className="block hover:text-dark-brown-color" to={`/books/${book.isbn}`}>
@@ -52,11 +52,14 @@ const AuthorDetails = () => {
         <div className="flex gap-4">
           <button
             onClick={() => navigate(`/authors/edit/${author.id}`)}
-            className="w-fit text-4xl p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
+            className="p-4 w-[50%] lg:w-fit lg:text-4xl lg:p-8 bg-light-brown-color text-white rounded hover:bg-dark-brown-color"
           >
             Edit
           </button>
-          <button onClick={handleDelete} className="w-fit text-4xl p-8 bg-red-600 text-white rounded hover:bg-red-700">
+          <button
+            onClick={handleDelete}
+            className="p-4 w-[50%] lg:w-fit lg:text-4xl lg:p-8 bg-red-600 text-white rounded hover:bg-red-700"
+          >
             Delete
           </button>
         </div>
